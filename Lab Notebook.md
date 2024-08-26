@@ -1,4 +1,4 @@
-# Lab Notebook:rose::rainbow::sunflower::tulip::four_leaf_clover::hibiscus:
+# Lab Notebook :rose: :rainbow: :sunflower: :tulip: :four_leaf_clover: :hibiscus:
 
 # Part 1 
 
