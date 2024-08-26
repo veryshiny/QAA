@@ -161,6 +161,8 @@ The data seems to be of good quality.
 - There is a small bump of nearly ~1% of Ns for the first position of the reads, but for the other positions 2-101, there is close to no Ns
 - Adapter content also seems to be super low (shown by `cutadapt` and `trimmomatic` results later as well). However they are present, near the 3` ends of the sequences.
 - the GC content differs a bit from the theoretical distribution.
+- per base average quality for each position is greater than 32, which is good.
+
 
 
 # Part 2
@@ -1061,11 +1063,14 @@ Took about the same time and Maximum resident set size (memory) to run
 In the trimmed reads vs the normal reads
 
 - the per-base-N content at the first positions have reduced to nearly 0% at the first position
-- more positions have high quality scores of 39 and 40.
+- more sequences have high quality scores of 39 and 40.
 - more different sequence lengths in the distribution due to the trimming
 - the GC-content distribution seems to be closer to the theoretical distribution than before
 - adapter content also improves in the trimmed reads, especially at the ends, with nearly 0% observed compared to the untrimmed data
-- the per-base sequence con
+- the per-base average quality for each position improves, reduced variance too.
+
+
+**Moved files to trimmomatic_output**
 
 # Part 3
 
