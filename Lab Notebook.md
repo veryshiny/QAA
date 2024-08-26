@@ -14,6 +14,8 @@ $fastqc --version
 
 ## Files I've been assigned and their file paths
 
+where the assignments are written:  ```/projects/bgmp/shared/Bi623/QAA_data_assignments.txt```
+
 ```bash
 Varsheni        19_3F_fox_S14_L008      7_2E_fox_S6_L008
 ```
@@ -151,7 +153,14 @@ FastQC is much more efficient
 
 How to unzip the files is using `unzip`
 
+The data seems to be of good quality.
 
+- All sequence lengths are 101 base pairs long.
+- Majority of the sequences have quality scores greater than 39.
+- There is low duplication observed, there is a peak at 10x but thats okay because it could be differential expression; we're looking at RNA-seq data.
+- There is a small bump of nearly ~1% of Ns for the first position of the reads, but for the other positions 2-101, there is close to no Ns
+- Adapter content also seems to be super low (shown by `cutadapt` and `trimmomatic` results later as well). However they are present, near the 3` ends of the sequences.
+- the GC content differs a bit from the theoretical distribution.
 
 
 # Part 2
@@ -1054,7 +1063,9 @@ In the trimmed reads vs the normal reads
 - the per-base-N content at the first positions have reduced to nearly 0% at the first position
 - more positions have high quality scores of 39 and 40.
 - more different sequence lengths in the distribution due to the trimming
-
+- the GC-content distribution seems to be closer to the theoretical distribution than before
+- adapter content also improves in the trimmed reads, especially at the ends, with nearly 0% observed compared to the untrimmed data
+- the per-base sequence con
 
 # Part 3
 
