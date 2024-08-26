@@ -841,9 +841,7 @@ zcat 7_2E_fox_trimmed.R1.fastq.gz  | sed -n '2~4p' | awk '{print length}'
   - MINLENGTH: 35 bases
 
 
-## trimmomatic trial script (not sure what we're doing)
-
-We're using trimmomatic on the files outputted from cutadapt because the adapter sequences have been trimmed using that software
+We're using trimmomatic on the files outputted from cutadapt because the adapter sequences have been trimmed using that command. 
 
 ```bash
 /usr/bin/time  -v trimmomatic PE 7_2E_fox_trimmed.R1.fastq.gz 7_2E_fox_trimmed.R2.fastq.gz 7_2E_fox_paired_R1.fastq.gz 7_2E_fox_unpaired_R1.fastq.gz 7_2E_fox_paired_R2.fastq.gz 7_2E_fox_unpaired_R2.fastq.gz  LEADING:3 TRAILING:3 SLIDINGWINDOW:5:15 MINLEN:35
@@ -923,3 +921,23 @@ zcat 7_2E_fox_paired_R2.fastq.gz | wc -l
 
 previously, both the original and the cutadapt output had 21113700 lines :: there's been a reduction!
 
+## Plotting the trimmed read lengths
+
+use conda environment bgmp_py312 to run script `read_length_distribution.py`
+
+this script helps make 2 histograms on a single plot for R1 and R2.
+
+Feel like putting in the untrimmed reads will skew the plot: lets do a sanity check :smiley:
+
+
+
+commands to run
+
+```bash
+./read_length_distribution.py  -r1 7_2E_fox_paired_R1.fastq.gz -r2
+7_2E_fox_paired_R2.fastq.gz -l 101 -o 7_2E_trimmed_read_distribution_hist.png
+
+ ./read_length_distribution.py  -r1 19_3F_fox_paired_R1.fastq.gz -r
+219_3F_fox_paired_R2.fastq.gz -l 101 -o 19_3F_trimmed_read_distribution_hist.png
+
+```
