@@ -1,4 +1,4 @@
-# Lab Notebook :rose: :heart: :rainbow:
+# Lab Notebook:rose::rainbow::sunflower::tulip::four_leaf_clover::hibiscus:
 
 # Part 1 
 
@@ -77,8 +77,82 @@ zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001
 ## Fastqc Command
 
 ```bash
-fastqc -o output/ -t 8 /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R2_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R2_001.fastq.gz
+/usr/bin/time -v fastqc -o output_FASTQC_part1/ -t 8 /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R2_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R2_001.fastq.gz
 ```
+
+## how long fastqc took vs our code!
+
+### how long fastqc took
+```bash
+Command being timed: "fastqc -o output/ -t 8 /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R2_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R2_001.fastq.gz"
+        User time (seconds): 166.98
+        System time (seconds): 11.13
+        Percent of CPU this job got: 251%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 1:10.89
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 2061136
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 89622
+        Voluntary context switches: 9987
+        Involuntary context switches: 476
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 8928
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+```
+### how long our code took
+
+Used conda environment bgmp_py312 for this
+
+```bash
+Command being timed: "./histogram.py -f /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz -l 101 -o 19_3F_fox_R1_hist.png"
+        User time (seconds): 195.60
+        System time (seconds): 0.39
+        Percent of CPU this job got: 99%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 3:16.04
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 73136
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 2
+        Minor (reclaiming a frame) page faults: 80123
+        Voluntary context switches: 578
+        Involuntary context switches: 148
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+```
+
+ took ***3 times*** as long as fastqc, fastqc did it for all 4 files and did a bunch of other analyses while our code only plotted a histogram for one file :sob: 
+
+- Percent of CPU fastqc got: 251%
+Maximum resident set size (kbytes): 2061136
+- Percent of CPU our script got: 99%
+Maximum resident set size (kbytes): 73136
+
+FastQC is much more efficient
+
+## Overall data quality from FASTQC :necktie:
+
+How to unzip the files is using `unzip`
+
+
+
 
 # Part 2
 
@@ -832,6 +906,7 @@ zcat 7_2E_fox_trimmed.R1.fastq.gz  | sed -n '2~4p' | awk '{print length}'
     259 0
 
 ```
+**moved the output files into cutadapt_output**
 
 ## Trimmomatic
 
@@ -927,17 +1002,79 @@ use conda environment bgmp_py312 to run script `read_length_distribution.py`
 
 this script helps make 2 histograms on a single plot for R1 and R2.
 
-Feel like putting in the untrimmed reads will skew the plot: lets do a sanity check :smiley:
-
-
-
 commands to run
 
 ```bash
-./read_length_distribution.py  -r1 7_2E_fox_paired_R1.fastq.gz -r2
-7_2E_fox_paired_R2.fastq.gz -l 101 -o 7_2E_trimmed_read_distribution_hist.png
+./read_length_distribution.py  -r1 7_2E_fox_paired_R1.fastq.gz -r2 7_2E_fox_paired_R2.fastq.gz -l 101 -o 7_2E_trimmed_read_distribution_hist.png
 
- ./read_length_distribution.py  -r1 19_3F_fox_paired_R1.fastq.gz -r
-219_3F_fox_paired_R2.fastq.gz -l 101 -o 19_3F_trimmed_read_distribution_hist.png
+ ./read_length_distribution.py  -r1 19_3F_fox_paired_R1.fastq.gz -r 219_3F_fox_paired_R2.fastq.gz -l 101 -o 19_3F_trimmed_read_distribution_hist.png
 
+```
+
+
+## FASTQC on trimmed data
+
+```bash 
+/usr/bin/time -v fastqc -o output_trimmed_part2/ -t 8 7_2E_fox_paired_R1.fastq.gz 7_2E_fox_paired_R2.fastq.gz 19_3F_fox_paired_R1.fastq.gz 19_3F_fox_paired_R2.fastq.gz
+```
+
+## time taken for fastqc
+
+```bash
+ Command being timed: "fastqc -o output_trimmed_part2/ -t 8 7_2E_fox_paired_R1.fastq.gz 7_2E_fox_paired_R2.fastq.gz 19_3F_fox_paired_R1.fastq.gz 19_3F_fox_paired_R2.fastq.gz"
+        User time (seconds): 161.63
+        System time (seconds): 9.52
+        Percent of CPU this job got: 254%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 1:07.38
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 2074796
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 121727
+        Voluntary context switches: 9085
+        Involuntary context switches: 551
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 9200
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+```
+Took about the same time and Maximum resident set size (memory) to run
+
+## quality check :tophat:
+
+In the trimmed reads vs the normal reads
+
+- the per-base-N content at the first positions have reduced to nearly 0% at the first position
+- more positions have high quality scores of 39 and 40.
+- more different sequence lengths in the distribution due to the trimming
+
+
+# Part 3
+
+## INstallations
+
+```bash
+conda install star
+conda install numpy
+conda install matplotlib
+conda install htseq
+```
+
+no need to shift environments anymore hehe :satisfied:
+
+### Versions
+
+```bash
+# Name                    Version 
+star                      2.7.11b  
+numpy                     1.26.4
+matplotlib                3.9.2
+htseq                     2.0.5 
 ```
