@@ -1281,11 +1281,12 @@ run htseq-count twice: once with `--stranded=yes` and again with `--stranded=rev
 ```bash
 /usr/bin/time -v htseq-count --stranded=yes 7_2e_star_output_part_3/7_2E_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 7_2E_foxAligned_stranded.genecount
 
-/usr/bin/time -v htseq-count ---stranded=reverse 7_2e_star_output_part_3/7_2E_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 7_2E_foxAligned_reverse.genecount
+/usr/bin/time -v htseq-count --stranded=reverse 7_2e_star_output_part_3/7_2E_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 7_2E_foxAligned_reverse.genecount
 
-/usr/bin/time -v htseq-count ---stranded=yes 19_3f_star_output_part_3/19_3F_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 19_3F_foxAligned_stranded.genecount
+/usr/bin/time -v htseq-count --stranded=yes 19_3f_star_output_part_3/19_3F_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 19_3F_foxAligned_stranded.genecount
 
-/usr/bin/time -v htseq-count ---stranded=reverse 19_3f_star_output_part_3/19_3F_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > > 19_3F_foxAligned_stranded.genecount
+/usr/bin/time -v htseq-count --stranded=reverse 19_3f_star_output_part_3/19_3F_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 19_3F_foxAligned_reverse.genecount
+
 ```
 
 ### took like 8 minutes to run just one of htseqcount
