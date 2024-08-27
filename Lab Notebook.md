@@ -1292,7 +1292,6 @@ run htseq-count twice: once with `--stranded=yes` and again with `--stranded=rev
 ### took like 8 minutes to run just one of htseqcount
 
  sbatching them all tgt in one script overnight : `htseqcount.sh`
- there's no output from the htseq
 
 ```bash
 Command being timed: "htseq-count --stranded=yes 7_2e_star_output_part_3/7_2E_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf"
@@ -1319,3 +1318,72 @@ Command being timed: "htseq-count --stranded=yes 7_2e_star_output_part_3/7_2E_fo
         Page size (bytes): 4096
         Exit status: 0
 ```
+
+finished running the sbatch script! the error log and time taken is in this file `/home/varsheni/bgmp/bioinfo/Bi623/QAA/logs/htseq_15884141.err`
+
+for the  7_2E it took 8 minutes each while the 19_3F took like 25-27 minutes
+
+## Data exploration of output :clipboard:
+
+### Checking number of reads mapped, total number of reads and percentage of reads mapped for all the files
+
+Outputing the results of the bash commands below into file `Summary_stats_hseq.txt`
+
+```bash
+awk '{totalsum+=$2} $1~"^ENSMU" {sumgenes+=$2} END {print "7_2E_foxAligned_stranded\n","\nmapped reads:", sumgenes, "\ntotal reads:", totalsum, "\npercentage of mapped reads:", sumgenes/totalsum*100} ' /home/varsheni/bgmp/bioinfo/Bi623/QAA/7_2E_foxAligned_stranded.genecount > Summary_stats_hseq.txt
+
+awk '{totalsum+=$2} $1~"^ENSMU" {sumgenes+=$2} END {print "\n\n7_2E_foxAligned_reverse\n","\nmapped reads:", sumgenes, "\ntotal reads:", totalsum, "\npercentage of mapped reads:", sumgenes/totalsum*100} ' /home/varsheni/bgmp/bioinfo/Bi623/QAA/7_2E_foxAligned_reverse.genecount >> Summary_stats_hseq.txt
+
+awk '{totalsum+=$2} $1~"^ENSMU" {sumgenes+=$2} END {print "\n\n19_3F_foxAligned_stranded\n","\nmapped reads:", sumgenes, "\ntotal reads:", totalsum, "\npercentage of mapped reads:", sumgenes/totalsum*100} ' /home/varsheni/bgmp/bioinfo/Bi623/QAA/19_3F_foxAligned_stranded.genecount >> Summary_stats_hseq.txt
+
+awk '{totalsum+=$2} $1~"^ENSMU" {sumgenes+=$2} END {print "\n\n19_3F_foxAligned_reverse\n","\nmapped reads:", sumgenes, "\ntotal reads:", totalsum, "\npercentage of mapped reads:", sumgenes/totalsum*100} ' /home/varsheni/bgmp/bioinfo/Bi623/QAA/19_3F_foxAligned_reverse.genecount >> Summary_stats_hseq.txt
+
+```
+
+## Output
+
+```bash
+7_2E_foxAligned_stranded
+ 
+mapped reads: 171207 
+total reads: 4882703 
+percentage of mapped reads: 3.5064
+
+
+7_2E_foxAligned_reverse
+ 
+mapped reads: 4026702 
+total reads: 4882703 
+percentage of mapped reads: 82.4687
+
+
+19_3F_foxAligned_stranded
+ 
+mapped reads: 500167 
+total reads: 15899268 
+percentage of mapped reads: 3.14585
+
+
+19_3F_foxAligned_reverse
+ 
+mapped reads: 12934731 
+total reads: 15899268 
+percentage of mapped reads: 81.3543
+
+```
+
+## Internet research for strandedness
+
+[source](https://www.seqanswers.com/forum/applications-forums/rna-sequencing/45704-majority-of-reads-counted-in-stranded-reverse-using-htseq)
+
+> HTSeq-count is counting the reads, which align to the given exons. If you use the stranded option "yes", it checks whether the reads are in the same orientation as the transcript. Illumina's TruSeq Stranded protocol produces libraries, which are in reverse orientation to the transcripts' one.
+> The more overlapping genes you have, the stronger becomes the influence of the stranded-option in HTSeq-count.
+> The resulting number of usable reads depends on the pre-processing, the reads' mapping-quality, the annotation (e.g. RefSeq vs. Ensembl annotation)
+
+[source](https://github.com/simon-anders/htseq/issues/106)
+
+>If I recall correctly, "reverse" is correct for TruSeq, because TrueSeq reads are 3' to 5', i.e. reverse to the "biological" reading direction.
+
+> That the non-reversed direction is called "yes" rather than "forward" hast historical reasons: When I write that, TruSeq did not exist yet, and the first stranded protocols where 5' to 3'.
+
+### Hence data is strand specific, as shown by our code and the fact that Truseq output reads are known to be reverse to the "biological" reading direction
