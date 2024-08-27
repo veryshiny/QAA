@@ -1,4 +1,4 @@
-# Lab Notebook :rainbow: :rose:  :sunflower: :tulip: :four_leaf_clover: :hibiscus:
+#  :rainbow: :rose:  :sunflower: Lab Notebook :tulip: :four_leaf_clover: :hibiscus:
 
 # Part 1 
 
@@ -162,6 +162,7 @@ The data seems to be of good quality.
 - Adapter content also seems to be super low (shown by `cutadapt` and `trimmomatic` results later as well). However they are present, near the 3` ends of the sequences.
 - the GC content differs a bit from the theoretical distribution.
 - per base average quality for each position is greater than 32, which is good.
+- Reverse reads (R2) have lower quality than Forward reads (R1) both sequence and basepair wise. 
 
 
 
@@ -205,6 +206,7 @@ AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
 Read 2
 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
 ```
+
 ## Command for cutadapt
 
 the -j 0 helps automatically detect and use all the cores available
@@ -779,15 +781,96 @@ Use your Unix skills to search for the adapter sequences in your datasets and co
 
 ### Commands used and why
 
+The adapter sequences should only be trimmed from the 3' side. detailed explanation [here](https://knowledge.illumina.com/software/general/software-general-reference_material-list/000002905)
+
+
+#### Checking length distribution of sequences before the adapter sequence
+
+R1 for the 7_2E file
+
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz | grep "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA" | sed -E -r 's/(.*)(AGATCGGAAGAGCACACGTCTGAACTCCAGTCA)(.*)/\1/' | awk '{print length($0)}' | sort | uniq -c | sort -nr | head -10
+    566 68
+    513 67
+    475 66
+    423 65
+    392 64
+    384 62
+    364 63
+    328 61
+    287 60
+    265 58
+```
+
+
+R2 for the 7_2E file
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R2_001.fastq.gz | grep "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT" | sed -E -r 's/(.*)(AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT)(.*)/\1/' | awk '{print length($0)}' | sort | uniq -c | sort -nr | head -10
+    573 68
+    532 67
+    482 66
+    452 65
+    411 64
+    388 62
+    371 63
+    331 61
+    313 60
+    272 58
+```
+R1 for the 19_3F file
+
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz | grep "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA" | sed -E -r 's/(.*)(AGATCGGAAGAGCACACGTCTGAACTCCAGTCA)(.*)/\1/' | awk '{print length($0)}' | sort | uniq -c | sort -nr | head -10
+    1103 68
+    999 67
+    941 66
+    939 65
+    876 64
+    823 63
+    773 62
+    651 61
+    576 60
+    490 59
+```
+
+R2 for the 19_3F file
+
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz | grep "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA" |  wc -l
+13819
+```
+
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R2_
+001.fastq.gz | grep "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT" | sed -E -r 's/(.*)(AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT)(.*)/\1/' | awk '{print length($0)}' | sort | uniq -c | sort -nr | head -10
+    1166 68
+   1053 67
+    973 65
+    967 66
+    901 64
+    856 63
+    814 62
+    695 61
+    597 60
+    514 59
+```
+
+As expected, the adapter sequence always tends to be at the end of the sequence for all 4 files
+
+- the adapt_seq is 33 bases long
+- most of the reads are 68 bp long meaning that for most of the reads, the adapters are the very last positions
+- most of the reads with adapters have them at the 3' end.
+
+
+the trimmed files don't have the sequences anymore.
 ```bash
 zcat bioinfo/Bi623/QAA/7_2E_fox_trimmed.R2.fastq.gz | grep "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT" 
 
 No output
 ```
-reverse complement
 
-need to check whether reverse complements play a factor 
 
+#### reverse complements
 
 Searching R2 for rev_comp of R1 adapter
 ```bash
@@ -812,7 +895,7 @@ zcat 7_2E_fox_trimmed.R2.fastq.gz | wc -l
 
 The line counts are the same before and after using cutadapt which makes sense.
 
-The reads must be of different lengths then now lets double check that
+The reads must be of different lengths then: double checked that using the below:
 
 ```bash
 
@@ -1016,12 +1099,29 @@ this script helps make 2 histograms on a single plot for R1 and R2.
 commands to run
 
 ```bash
-./read_length_distribution.py  -r1 7_2E_fox_paired_R1.fastq.gz -r2 7_2E_fox_paired_R2.fastq.gz -l 101 -o 7_2E_trimmed_read_distribution_hist.png
+./read_length_distribution.py  -r1 trimmomatic_output/7_2E_fox_paired_R1.fastq.gz -r2 trimmomatic_output/7_2E_fox_paired_R2.fastq.gz -l 101 -o 7_2E_trimmed_read_distribution_hist.png
 
- ./read_length_distribution.py  -r1 19_3F_fox_paired_R1.fastq.gz -r 219_3F_fox_paired_R2.fastq.gz -l 101 -o 19_3F_trimmed_read_distribution_hist.png
+ ./read_length_distribution.py  -r1 trimmomatic_output/19_3F_fox_paired_R1.fastq.gz -r2 trimmomatic_output/19_3F_fox_paired_R2.fastq.gz -l 101 -o 19_3F_trimmed_read_distribution_hist.png
 
 ```
+### 26 August : Dear Diary :bookmark_tabs: , Conversation with jules about unpaired reads
 
+How does the distribution for the unpaired look?
+
+```bash
+./read_length_distribution.py  -r1 trimmomatic_output/7_2E_fox_unpaired_R1.fastq.gz -r2 trimmomatic_output/7_2E_fox_unpaired_R2.fastq.gz -l 101 -o 7_2E_unpaired_trimmed_read_distribution_hist.png
+
+ ./read_length_distribution.py  -r1 trimmomatic_output/19_3F_fox_unpaired_R1.fastq.gz -r2 trimmomatic_output/19_3F_fox_unpaired_R2.fastq.gz -l 101 -o 19_3F_unpaired_trimmed_read_distribution_hist.png
+
+```
+As expected, the read counts are very low in the `unpaired` - 40k and 60k in 7_2e and 19_3f respectively. They won't influence the original paired only plots.
+
+We can see that for both samples, R2 has more trimmed reads than R1.
+This could be due to the fact  that Reverse reads tend to have slight lower quality than forward reads, so quality trimming would [affect R2 more](https://www.ecseq.com/support/ngs/why-has-reverse-read-a-worse-quality-than-forward-read-in-Illumina-sequencing).
+
+> A lower quality for the reverse read is an expected phenotype in paired-end sequencing runs. This is explained by the fact that the clusters size decreases during bridge amplification at the paired-end turnaround stage (see Figure 2) that occurs before read 2 is sequenced. During the paired-end turnaround, an Illumina MiSeq does 12 cycles of bridge amplification in order to regenerate the clusters.
+
+> Both, 1) a cluster with a smaller amount of molecules and 2) a higher number of errors within these molecules due to more amplification steps, lead to the effect that the per base quality of the read 2 cluster decreases much earlier than for read 1. The explanation: The already increased percentage error rate within the (smaller) cluster is now added to the normal 'phasing errors'.
 
 ## FASTQC on trimmed data
 
@@ -1074,7 +1174,7 @@ In the trimmed reads vs the normal reads
 
 # Part 3
 
-## INstallations
+## Installations :snowman:
 
 ```bash
 conda install star
@@ -1093,4 +1193,128 @@ star                      2.7.11b
 numpy                     1.26.4
 matplotlib                3.9.2
 htseq                     2.0.5 
+```
+
+## I'm gonna be a :star2: time!
+
+- mouse genome fasta files (Ensemble release 112)
+
+
+```https://ftp.ensembl.org/pub/release-112/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
+```
+```
+https://ftp.ensembl.org/pub/release-112/gtf/mus_musculus/Mus_musculus.GRCm39.112.gtf.gz
+```
+
+- generate an alignment database from fasta mouse.
+
+created new directory: `Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b`
+
+```bash
+wget https://ftp.ensembl.org/pub/release-112/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
+
+wget https://ftp.ensembl.org/pub/release-112/gtf/mus_musculus/Mus_musculus.GRCm39.112.gtf.gz
+```
+
+need to unzip the GTF file
+
+```bash
+gunzip Mus_musculus.GRCm39.112.gtf.gz
+```
+
+going to use global paths for the slurm script
+
+```bash
+/usr/bin/time -v STAR --runThreadN 8 --runMode genomeGenerate \
+--genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b \ --genomeFastaFiles /home/varsheni/bgmp/bioinfo/Bi623/QAA/mouse_fasta/Mus_musculus.GRCm39.dna.primary_assembly.fa \
+--sjdbGTFfile /home/varsheni/bgmp/bioinfo/Bi623/QAA/mouse_fasta/Mus_musculus.GRCm39.112.gtf
+```
+
+- Align the reads to your mouse genomic database using a splice-aware aligner. 
+
+```bash
+/usr/bin/time -v STAR \
+--runThreadN 8 \
+--runMode alignReads --outFilterMultimapNmax 3 \
+--outSAMunmapped Within KeepPairs \
+--alignIntronMax 1000000 --alignMatesGapMax 1000000 \
+--readFilesCommand zcat \
+--readFilesIn /home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/7_2E_fox_paired_R1.fastq.gz \
+/home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/7_2E_fox_paired_R2.fastq.gz \
+--genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b \
+--outFileNamePrefix 7_2E_fox
+```
+
+```bash
+/usr/bin/time -v STAR \
+--runThreadN 8 \
+--runMode alignReads --outFilterMultimapNmax 3 \
+--outSAMunmapped Within KeepPairs \
+--alignIntronMax 1000000 --alignMatesGapMax 1000000 \
+--readFilesCommand zcat \
+--readFilesIn /home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/19_3F_fox_paired_R1.fastq.gz \
+/home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/19_3F_fox_paired_R2.fastq.gz \
+--genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b \
+--outFileNamePrefix 19_3F_fox
+```
+
+## Mapped and unmapped reads
+
+```bash
+./check_if_read_mapped.py -f 7_2e_star_output_part_3/7_2E_foxAligned.out.sam 
+Number of mapped reads  9424733
+Number of unmapped reads        340673
+```
+
+```bash
+./check_if_read_mapped.py -f 19_3f_star_output_part_3/19_3F_foxAligned.out.sam
+Number of mapped reads  30512167
+Number of unmapped reads        1286369
+```
+
+## Using htseq-count
+
+from ICA4 :: we have never used this before rip :skull:
+
+run htseq-count twice: once with `--stranded=yes` and again with `--stranded=reverse`
+
+```bash
+/usr/bin/time -v htseq-count --stranded=yes 7_2e_star_output_part_3/7_2E_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 7_2E_foxAligned_stranded.genecount
+
+/usr/bin/time -v htseq-count ---stranded=reverse 7_2e_star_output_part_3/7_2E_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 7_2E_foxAligned_reverse.genecount
+
+/usr/bin/time -v htseq-count ---stranded=yes 19_3f_star_output_part_3/19_3F_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > 19_3F_foxAligned_stranded.genecount
+
+/usr/bin/time -v htseq-count ---stranded=reverse 19_3f_star_output_part_3/19_3F_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf > > 19_3F_foxAligned_stranded.genecount
+```
+
+### took like 8 minutes to run just one of htseqcount
+
+ sbatching them all tgt in one script overnight : `htseqcount.sh`
+ there's no output from the htseq
+
+```bash
+Command being timed: "htseq-count --stranded=yes 7_2e_star_output_part_3/7_2E_foxAligned.out.sam mouse_fasta/Mus_musculus.GRCm39.112.gtf"
+        User time (seconds): 511.95
+        System time (seconds): 2.20
+        Percent of CPU this job got: 99%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 8:36.49
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 250620
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 412688
+        Voluntary context switches: 609
+        Involuntary context switches: 207
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
 ```
