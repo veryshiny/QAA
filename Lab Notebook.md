@@ -1200,9 +1200,9 @@ htseq                     2.0.5
 - mouse genome fasta files (Ensemble release 112)
 
 
-```https://ftp.ensembl.org/pub/release-112/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
-```
-```
+```bash
+https://ftp.ensembl.org/pub/release-112/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
+
 https://ftp.ensembl.org/pub/release-112/gtf/mus_musculus/Mus_musculus.GRCm39.112.gtf.gz
 ```
 
@@ -1216,10 +1216,11 @@ wget https://ftp.ensembl.org/pub/release-112/fasta/mus_musculus/dna/Mus_musculus
 wget https://ftp.ensembl.org/pub/release-112/gtf/mus_musculus/Mus_musculus.GRCm39.112.gtf.gz
 ```
 
-need to unzip the GTF file
+need to unzip the GTF and FASTA downloaded files
 
 ```bash
 gunzip Mus_musculus.GRCm39.112.gtf.gz
+gunzip Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
 ```
 
 going to use global paths for the slurm script
@@ -1340,7 +1341,7 @@ awk '{totalsum+=$2} $1~"^ENSMU" {sumgenes+=$2} END {print "\n\n19_3F_foxAligned_
 
 ```
 
-## Output
+
 
 ```bash
 7_2E_foxAligned_stranded
@@ -1386,4 +1387,11 @@ percentage of mapped reads: 81.3543
 
 > That the non-reversed direction is called "yes" rather than "forward" hast historical reasons: When I write that, TruSeq did not exist yet, and the first stranded protocols where 5' to 3'.
 
-### Hence data is strand specific, as shown by our code and the fact that Truseq output reads are known to be reverse to the "biological" reading direction
+### Hence data is strand specific (reverse to the "biological" reading direction) , as shown by our code and the fact that Truseq output reads are known to be reverse to the "biological" reading direction
+
+
+# Review of Metadata
+
+
+
+# Checklist for file submission and report files
