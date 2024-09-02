@@ -861,6 +861,7 @@ As expected, the adapter sequence always tends to be at the end of the sequence 
 - most of the reads are 68 bp long meaning that for most of the reads, the adapters are the very last positions
 - most of the reads with adapters have them at the 3' end.
 
+Plotted these values using `plot_adapter_position.py`
 
 the trimmed files don't have the sequences anymore.
 ```bash
@@ -1096,6 +1097,12 @@ use conda environment bgmp_py312 to run script `read_length_distribution.py`
 
 this script helps make 2 histograms on a single plot for R1 and R2.
 
+Initially had only 10 bins in the histogram, now I'm going to check how the 100 bins look.
+
+I removed the 101 long reads because they weren't trimmed at all!
+
+> Updated 1 September :: added them back
+
 commands to run
 
 ```bash
@@ -1215,6 +1222,7 @@ wget https://ftp.ensembl.org/pub/release-112/fasta/mus_musculus/dna/Mus_musculus
 
 wget https://ftp.ensembl.org/pub/release-112/gtf/mus_musculus/Mus_musculus.GRCm39.112.gtf.gz
 ```
+first took like 30 minutes to download
 
 need to unzip the GTF and FASTA downloaded files
 
@@ -1230,7 +1238,32 @@ going to use global paths for the slurm script
 --genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b \ --genomeFastaFiles /home/varsheni/bgmp/bioinfo/Bi623/QAA/mouse_fasta/Mus_musculus.GRCm39.dna.primary_assembly.fa \
 --sjdbGTFfile /home/varsheni/bgmp/bioinfo/Bi623/QAA/mouse_fasta/Mus_musculus.GRCm39.112.gtf
 ```
-
+### Time taken
+```bash
+Command being timed: "STAR --runThreadN 8 --runMode genomeGenerate --genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b --genomeFastaFiles /home/varsheni/bgmp/bioinfo/Bi623/QAA/mouse_fasta/Mus_musculus.GRCm39.dna.primary_assembly.fa --sjdbGTFfile /home/varsheni/bgmp/bioinfo/Bi623/QAA/mouse_fasta/Mus_musculus.GRCm39.112.gtf"
+	User time (seconds): 6097.71
+	System time (seconds): 92.00
+	Percent of CPU this job got: 514%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 20:02.72
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 32372616
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 33669943
+	Voluntary context switches: 19528
+	Involuntary context switches: 7008
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+```
 - Align the reads to your mouse genomic database using a splice-aware aligner. 
 
 ```bash
@@ -1258,6 +1291,59 @@ going to use global paths for the slurm script
 --genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b \
 --outFileNamePrefix 19_3F_fox
 ```
+### Time taken
+
+```bash
+	Command being timed: "STAR --runThreadN 8 --runMode alignReads --outFilterMultimapNmax 3 --outSAMunmapped Within KeepPairs --alignIntronMax 1000000 --alignMatesGapMax 1000000 --readFilesCommand zcat --readFilesIn /home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/7_2E_fox_paired_R1.fastq.gz /home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/7_2E_fox_paired_R2.fastq.gz --genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b --outFileNamePrefix 7_2E_fox"
+	User time (seconds): 323.47
+	System time (seconds): 13.96
+	Percent of CPU this job got: 582%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:57.94
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 27361304
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 192256
+	Voluntary context switches: 37089
+	Involuntary context switches: 551
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+```
+```bash
+	Command being timed: "STAR --runThreadN 8 --runMode alignReads --outFilterMultimapNmax 3 --outSAMunmapped Within KeepPairs --alignIntronMax 1000000 --alignMatesGapMax 1000000 --readFilesCommand zcat --readFilesIn /home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/19_3F_fox_paired_R1.fastq.gz /home/varsheni/bgmp/bioinfo/Bi623/QAA/trimmomatic_output/19_3F_fox_paired_R2.fastq.gz --genomeDir /home/varsheni/bgmp/bioinfo/Bi623/QAA/Mus_musculus.GRCm39.dna.ens112.STAR_2.7.11b --outFileNamePrefix 19_3F_fox"
+	User time (seconds): 1067.47
+	System time (seconds): 21.06
+	Percent of CPU this job got: 712%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:32.88
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 27513340
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 313505
+	Voluntary context switches: 129230
+	Involuntary context switches: 1750
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+```
+
 
 ## Mapped and unmapped reads
 
@@ -1323,6 +1409,9 @@ Command being timed: "htseq-count --stranded=yes 7_2e_star_output_part_3/7_2E_fo
 finished running the sbatch script! the error log and time taken is in this file `/home/varsheni/bgmp/bioinfo/Bi623/QAA/logs/htseq_15884141.err`
 
 for the  7_2E it took 8 minutes each while the 19_3F took like 25-27 minutes
+
+too long, the time for each run is present in this file 
+```/home/varsheni/bgmp/bioinfo/Bi623/QAA/logs/htseq_15884141.err```
 
 ## Data exploration of output :clipboard:
 
@@ -1395,3 +1484,8 @@ percentage of mapped reads: 81.3543
 
 
 # Checklist for file submission and report files
+
+figuring out Rmarkdown
+
+- insert figures using ```knitr::include_graphics```
+
