@@ -41,21 +41,20 @@ zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R2_0
 65393020
 
 ```
-number of lines for this file = 65393020
+number of lines for this file = 65,393,020
 
 ```bash 
 zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz | wc -l
 
 zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R2_001.fastq.gz | wc -l
 ```
-number of lines for this file = 21113700
+number of lines for this file = 21,113,700
 
 ### number of duplicate sequences
 
 
 ```bash
-zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz | sed -n '2~4p' | sort | uniq -c | sort -nr |
- head
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz | sed -n '2~4p' | sort | uniq -c | sort -nr | head
    2348 CTTTTACTTCCTCTAGATAGTCAAGTTCGACCGTCTTCTCAGCGCTCCGCCAGGGCCGTGGGCCGACCCCGGCGGGGCCGATCCGAGGGCCTCACTAAACC
    1880 CTCGTTTGAATATTTGCTACTACCACCAAGATCTGCACCTGCGGCGGCTCCACCCGGGCCCGCGCCCTAGGCTTCAAGGCTCACCGCAGCGGCCCTCCTAC
    1519 CCCGGCCGTCCCTCTTAATCATGGCCTCAGTTCCGAAAACCAACAAAATAGAACCGCGGTCCTATTCCATTATTCCTAGCTGCGGTATCCAGGCGGCTCGG
@@ -69,12 +68,97 @@ zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001
 
 ```
 
+### Checking Barcodes of the data
+
+```bash
+
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz | sed -n '1~4p' | sed -E -r 's/(.*)(1:N:0:)(.*)/\3/' | sort  | uniq -c | sort -nr | uniq -c | head
+      1 5064906 CGGTAATC+GATTACCG
+      1   44088 NGGTAATC+NATTACCG
+      1   22472 CGGTAATC+GATTAACG
+      1   14332 CGGTAATC+GATTACAG
+      1   11559 NGGTAATC+GATTACCG
+      1    7961 CGGTAATC+GATTACGG
+      1    6824 CGGTAATC+AATTACCG
+      1    6657 CGGTAATC+GATTACCC
+      1    6580 CGGTAATC+GATTACCA
+      1    6564 CGGTAATC+GAGTACCG
+
+```
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R2_001.fastq.gz | sed -n '1~4p' | sed -E -r 's/(.*)(2:N:0:)(.*)/\3/' | so
+rt  | uniq -c | sort -nr | uniq -c | head
+      1 5064906 CGGTAATC+GATTACCG
+      1   44088 NGGTAATC+NATTACCG
+      1   22472 CGGTAATC+GATTAACG
+      1   14332 CGGTAATC+GATTACAG
+      1   11559 NGGTAATC+GATTACCG
+      1    7961 CGGTAATC+GATTACGG
+      1    6824 CGGTAATC+AATTACCG
+      1    6657 CGGTAATC+GATTACCC
+      1    6580 CGGTAATC+GATTACCA
+      1    6564 CGGTAATC+GAGTACCG
+```
+
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz  | sed -n '1~4p' | sed -E -r 's/(.*)(1:N:0:)(.*)/\3/' |
+ sort  | uniq -c | sort -nr | uniq -c | head
+      1 15733007 TGTTCCGT+ACGGAACA
+      1  136390 NGTTCCGT+NCGGAACA
+      1   37357 NGTTCCGT+ACGGAACA
+      1   34338 TGTTCCGT+ACGGCACA
+      1   34173 TGTTCCGT+ACGGAAAA
+      1   26004 TGTTCCGT+ACGGAACG
+      1   24420 TGTTCCGT+AAGGAACA
+      1   24276 TGTTCCGC+ACGGAACA
+      1   21854 TGTTCCGT+ACGGGACA
+      1   21215 TGTTCCGT+ACGGAACC
+```
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R2_001.fastq.gz  | sed -n '1~4p' | sed -E -r 's/(.*)(2:N:0:)(.*)/\3/' |
+ sort  | uniq -c | sort -nr | uniq -c | head
+      1 15733007 TGTTCCGT+ACGGAACA
+      1  136390 NGTTCCGT+NCGGAACA
+      1   37357 NGTTCCGT+ACGGAACA
+      1   34338 TGTTCCGT+ACGGCACA
+      1   34173 TGTTCCGT+ACGGAAAA
+      1   26004 TGTTCCGT+ACGGAACG
+      1   24420 TGTTCCGT+AAGGAACA
+      1   24276 TGTTCCGC+ACGGAACA
+      1   21854 TGTTCCGT+ACGGGACA
+      1   21215 TGTTCCGT+ACGGAACC
+```
+ 5 million of the 5.2 million reads have a perfect match of Barcodes for 7_2E
+According to the metadata, the barcodes should be CGGTAATC+GATTACCG.
+
+ 15.7 million of the 16.3 million reads have a perfect match of Barcodes for 19_3F
+According to the metadata, the barcodes should be TGTTCCGT+ACGGAACA.
+
+
 ### Length of sequences 
 
 ```bash 
  zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/19_3F_fox_S14_L008_R1_001.fastq.gz | sed -n '2~4p' | head -100000 | awk '{print length}' | uniq  
 101
 ```
+
+### Checking for duplication & adapters
+
+```bash
+zcat /projects/bgmp/shared/2017_sequencing/demultiplexed/7_2E_fox_S6_L008_R1_001.fastq.gz | grep "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA" | sort | uniq -c | sort -nr | head
+
+      4 CGGCCGTGCGTACTTAGACATGCATGGCTTAATCTTTGAGACAAGCATATGCTACTGGCAGGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGGTA
+      3 CTTTTCCTTTCCCATTTTTGCTTTGAATTAGCGGTGGTTTTCACAACACCTGCGTTCTGACAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGGTAA
+      3 CTCGCATTCCACGCCCGGCTCCACGCCAGCGAGCCGGGCTTCTTACCCATTTAAAGTTTGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGGTAAT
+      3 CTACTACATAGTATGTATCGTGAAGCACGATGTCAAGGGATGAGTTGGATAAAACAATTCCGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGGTA
+      3 CCCCTATACCCAGGTCGGACGACCGATTTGCACGTCAGGACCGCTACGGACCTCCACCAGAGTTTCCAGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+      3 CACCATAATGGACACAGGGCTGTTGGCCACGTGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGGTAATCATCTCGTATGCCGTCTTCTGCTTGAA
+      2 TTCAAAGTTCTCGTTTGAATATTTGCTACTACCACCAAGATCTGCACCTGCGGCGGCTCCACCCGGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACC
+      2 TGCTGGTCAGGGGGGATGCCCTCCTTGTCCTGGATCTTTGCCTTGACATTCTCTATGGTGTCACTGGGAGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+      2 TGCCAGCTTGCGAATCCTGTCCAGGACAAGGTCAATGATCTCCTTGCCAATGGTGTAGTGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGGTAAT
+      2 TCTCTGTCCCGGTCTCGATTTTCTTTTCCTTCTTCATTAGATTCAGTTTGTCAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGGTAATCATCTCGT
+```
+
 
 ## Fastqc Command
 
@@ -1431,7 +1515,6 @@ awk '{totalsum+=$2} $1~"^ENSMU" {sumgenes+=$2} END {print "\n\n19_3F_foxAligned_
 ```
 
 
-
 ```bash
 7_2E_foxAligned_stranded
  
@@ -1481,7 +1564,11 @@ percentage of mapped reads: 81.3543
 
 # Review of Metadata
 
+## GO analysis of expressed genes from htseq-count
 
+## Heatmap of expression of genes?
+
+## Adapter Dimers
 
 # Checklist for file submission and report files
 
