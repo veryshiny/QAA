@@ -1566,10 +1566,17 @@ percentage of mapped reads: 81.3543
 
 ## GO analysis of expressed genes from htseq-count
 
-## Heatmap of expression of genes?
+```bash
+cat 19_3F_foxAligned_reverse.genecount | grep -v "^_" | sort -k2 -nr | head -2
+ENSMUSG00000119584      631132
+ENSMUSG00000064351      107173
+ cat 7_2E_foxAligned_reverse.genecount | grep -v "^_" | sort -k2 -nr | head -2
+ENSMUSG00000119584      103542
+ENSMUSG00000064351      33169 
+```
 
-## Adapter Dimers
-
+the genes are boring I'm ditching this :(
+  
 # Checklist for file submission and report files
 
 figuring out Rmarkdown
