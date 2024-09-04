@@ -11,6 +11,10 @@
 *.bam
 *.gtf
 *.gff
+*.out
+*.svg
+*.zip
+
 
 # STAR files
 *.out.tab
